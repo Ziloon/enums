@@ -4,6 +4,7 @@ enum IpAddrKind {
     V6(String),
 }
 
+#[derive(Debug)]
 enum Message {
     Quit,
     Move {x: i32, y: i32},
@@ -13,6 +14,10 @@ enum Message {
 
 impl Message {
     fn call(&self) {}
+
+    fn build() -> Message {
+        Message::Quit
+    }
 }
 
 fn main() {
@@ -22,10 +27,24 @@ fn main() {
     route(loopback);
 
     let q = Message::Quit;
-    let _m = Message::Move { x: 12, y: 24 };
-    let _w = Message::Write(String::from("Hello"));
-    let _c = Message::ChangeColor(0, 255, 255);
+    let m = Message::Move { x: 12, y: 24 };
+    let w = Message::Write(String::from("Hello"));
+    let c = Message::ChangeColor(0, 255, 255);
     q.call();
+
+    let msg = match q {
+        Message::Move { x, y } => m,
+        Message::ChangeColor(r,g ,b ) => c,
+        Message::Write(x) => w,
+        _ => Message::build(),
+    };
+    println!("{:?}", msg);
+
+    // Option
+    let x = 5;
+    let y = Some(5);
+    assert_eq!(y.is_some(), true);
+
 }
 
 fn route(ip_kind: IpAddrKind) {
